@@ -16,9 +16,6 @@
     "db:migrate:deploy": {},
     "db:push": {},
     "db:seed": {},
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
     "dev": {
       "cache": false,
       "persistent": true,
@@ -31,6 +28,9 @@
     },
     "generate": {
       "dependsOn": ["^generate"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
     }
   }
 }
