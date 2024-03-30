@@ -9,12 +9,17 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle("Todo API")
     .setDescription("The Todo API description")
-    .setVersion("1.0")
+    .setVersion(process.env.npm_package_version || "1.0")
     .addTag("todo")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document);
+  SwaggerModule.setup("api/docs", app, document, {
+    swaggerOptions: {
+      tagsSorter: "alpha",
+      operationsSorter: "alpha",
+    },
+  });
 
   await app.listen(3000);
 }
