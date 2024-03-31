@@ -1,32 +1,40 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { CreateTodoDto } from "./dto/create-todo.dto";
 import { UpdateTodoDto } from "./dto/update-todo.dto";
-import { PrismaService } from "src/prisma/prisma.service";
+import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class TodoService {
   constructor(private prismaService: PrismaService) {}
 
-  create(data: CreateTodoDto) {
-    return this.prismaService.todo.create({
+  async create(data: CreateTodoDto) {
+    return await this.prismaService.todo.create({
       data,
     });
   }
 
-  findAll() {
-    return this.prismaService.todo.findMany();
+  async findAll() {
+    return await this.prismaService.todo.findMany();
   }
 
-  findOne(id: string) {
-    return this.prismaService.todo.findUnique({
+  async findOne(id: string) {
+    const todo = await this.prismaService.todo.findUnique({
+      where: { id },
+    });
+
+    if (!todo) {
+      throw new NotFoundException("Todo not found");
+    }
+
+    return await this.prismaService.todo.findUnique({
       where: { id },
     });
   }
 
-  update(id: string, body: UpdateTodoDto) {
+  async update(id: string, data: UpdateTodoDto) {
     Logger.log(`Looking for todo with id: ${id}`);
 
-    const existingTodo = this.prismaService.todo.findUnique({
+    const existingTodo = await this.prismaService.todo.findUnique({
       where: { id },
     });
 
@@ -35,17 +43,23 @@ export class TodoService {
     }
 
     Logger.log(`Updating todo:`);
-    Logger.log(JSON.stringify(body));
+    Logger.log(JSON.stringify(data));
 
-    return this.prismaService.todo.update({
+    return await this.prismaService.todo.update({
       where: { id },
-      data: body,
+      data,
     });
   }
 
-  remove(id: string) {
+  async remove(id: string) {
     Logger.log(`Deleting todo with id: ${id}`);
-    return this.prismaService.todo.delete({
+    const existingTodo = await this.prismaService.todo.findUnique({
+      where: { id },
+    });
+    if (!existingTodo) {
+      throw new NotFoundException("Todo not found");
+    }
+    return await this.prismaService.todo.delete({
       where: { id },
     });
   }

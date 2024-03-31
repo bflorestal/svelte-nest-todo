@@ -1,5 +1,5 @@
 import { IsBoolean, IsNotEmpty, IsString, MinLength } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 
 export class CreateTodoDto {
   @IsString()
@@ -10,6 +10,6 @@ export class CreateTodoDto {
 
   @IsBoolean()
   @IsNotEmpty()
-  @ApiProperty({ required: false, default: false })
+  @ApiPropertyOptional({ default: false })
   completed?: boolean = false;
 }
