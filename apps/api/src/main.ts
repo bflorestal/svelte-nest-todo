@@ -10,7 +10,6 @@ async function bootstrap() {
     .setTitle("Todo API")
     .setDescription("The Todo API description")
     .setVersion(process.env.npm_package_version || "1.0")
-    .addTag("todo")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
