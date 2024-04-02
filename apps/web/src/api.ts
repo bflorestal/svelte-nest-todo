@@ -1,3 +1,5 @@
+import { TodoListSchema } from "./schemas/Todo";
+
 export class ResponseError extends Error {
   response: Response;
 
@@ -33,7 +35,11 @@ export async function fetchTodos() {
       throw new ResponseError("Failed to fetch todos", res);
     }
 
-    return res.json();
+    const data = await res.json();
+
+    const todos = TodoListSchema.parse(data);
+
+    return todos;
   } catch (error) {
     handleError(error);
   }

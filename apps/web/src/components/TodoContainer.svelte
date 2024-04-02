@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Input } from "$lib/components/ui/input";
-  import { Checkbox } from "$lib/components/ui/checkbox";
   import {
     CardTitle,
     CardDescription,
@@ -9,14 +8,19 @@
     CardContent,
     Card,
   } from "$lib/components/ui/card";
-  import { FileEditIcon, PlusIcon, TrashIcon } from "lucide-svelte";
+  import { Skeleton } from "$lib/components/ui/skeleton";
+  import { PlusIcon } from "lucide-svelte";
   import { createQuery } from "@tanstack/svelte-query";
   import { fetchTodos } from "../api";
-  import { Skeleton } from "$lib/components/ui/skeleton";
+
+  import Task from "./Task.svelte";
 
   const query = createQuery({
     queryKey: ["todos"],
-    queryFn: async () => fetchTodos(),
+    queryFn: async () => {
+      const todos = await fetchTodos();
+      return todos || [];
+    },
   });
 
   const loadingTasks = Array.from({ length: 5 }, () => ({}));
@@ -51,35 +55,9 @@
         <p>Une erreur est survenue lors du chargement des tâches.</p>
       {/if}
       {#if $query.isSuccess}
-        <div>
-          {#each $query.data as task (task.id)}
-            <div class="grid gap-2 mt-4">
-              <div class="flex items-center gap-4">
-                <Checkbox
-                  id={task.id}
-                  checked={task.completed}
-                  class="peer-hidden"
-                />
-                <label
-                  class="flex-1 text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  for={task.id}
-                >
-                  {task.title}
-                </label>
-                <div class="flex gap-2 ml-auto">
-                  <Button class="h-6 w-6" size="icon" variant="outline">
-                    <FileEditIcon class="h-4 w-4" />
-                    <span class="sr-only">Modifier</span>
-                  </Button>
-                  <Button class="h-6 w-6" size="icon" variant="outline">
-                    <TrashIcon class="h-4 w-4" />
-                    <span class="sr-only">Supprimer</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          {/each}
-        </div>
+        {#each $query.data as task (task.id)}
+          <Task {task} />
+        {/each}
       {/if}
     </div>
   </CardContent>
