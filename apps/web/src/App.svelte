@@ -14,7 +14,7 @@
 </script>
 
 <ModeWatcher />
-<Toaster />
+<Toaster richColors />
 <QueryClientProvider client={queryClient}>
   <main class="grid">
     <TodoContainer />
