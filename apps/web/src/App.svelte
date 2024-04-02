@@ -1,13 +1,12 @@
 <script lang="ts">
+  import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import TodoContainer from "./components/TodoContainer.svelte";
 
-  const EXAMPLE_TASKS = [
-    "Acheter des provisions pour la semaine",
-    "Appeler maman",
-    "Terminer le rapport",
-  ];
+  const queryClient = new QueryClient();
 </script>
 
-<main class="grid">
-  <TodoContainer tasks={EXAMPLE_TASKS} />
-</main>
+<QueryClientProvider client={queryClient}>
+  <main class="grid">
+    <TodoContainer />
+  </main>
+</QueryClientProvider>
