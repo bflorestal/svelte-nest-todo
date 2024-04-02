@@ -4,7 +4,13 @@
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
   import TodoContainer from "./components/TodoContainer.svelte";
 
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+      },
+    },
+  });
 </script>
 
 <ModeWatcher />
