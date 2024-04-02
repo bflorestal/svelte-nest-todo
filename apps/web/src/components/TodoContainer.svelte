@@ -1,19 +1,17 @@
 <script lang="ts">
-  import { Button } from "$lib/components/ui/button";
-  import { Input } from "$lib/components/ui/input";
   import {
-    CardTitle,
+    Card,
+    CardContent,
     CardDescription,
     CardHeader,
-    CardContent,
-    Card,
+    CardTitle,
   } from "$lib/components/ui/card";
   import { Skeleton } from "$lib/components/ui/skeleton";
-  import { PlusIcon } from "lucide-svelte";
   import { createQuery } from "@tanstack/svelte-query";
   import { fetchTodos } from "../api";
 
   import Task from "./Task.svelte";
+  import TodoForm from "./TodoForm.svelte";
 
   const query = createQuery({
     queryKey: ["todos"],
@@ -33,17 +31,7 @@
   </CardHeader>
   <CardContent>
     <!-- Form -->
-    <div class="flex items-center gap-2">
-      <Input
-        class="flex-1 min-w-0"
-        placeholder="Ajouter une tâche"
-        type="text"
-      />
-      <Button class="h-8 w-8" size="icon" variant="outline">
-        <PlusIcon class="h-4 w-4" />
-        <span class="sr-only">Ajouter</span>
-      </Button>
-    </div>
+    <TodoForm />
     <!-- List -->
     <div class="mt-4">
       {#if $query.isPending}

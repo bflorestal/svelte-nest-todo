@@ -1,4 +1,4 @@
-import { TodoListSchema } from "./schemas/Todo";
+import { TodoListSchema, TodoSchema } from "./schemas/Todo";
 
 export class ResponseError extends Error {
   response: Response;
@@ -12,6 +12,10 @@ export class ResponseError extends Error {
 export function handleError(err: unknown) {
   if (err instanceof ResponseError) {
     switch (err.response.status) {
+      case 400:
+        // handle 400 errors
+        console.error("Bad request");
+        break;
       case 404:
         // handle 404 errors
         console.error("Not found");
@@ -40,6 +44,30 @@ export async function fetchTodos() {
     const todos = TodoListSchema.parse(data);
 
     return todos;
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function createTodo(title: string) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/todo`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title }),
+    });
+
+    if (!res.ok) {
+      throw new ResponseError("Failed to create todo", res);
+    }
+
+    const data = await res.json();
+
+    const parsedTodo = TodoSchema.parse(data);
+
+    return parsedTodo;
   } catch (error) {
     handleError(error);
   }
