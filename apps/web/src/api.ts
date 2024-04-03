@@ -76,7 +76,7 @@ export async function createTodo(title: string) {
 export async function updateTodo(todo: Todo) {
   try {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/todo/${todo.id}`, {
-      method: "PUT",
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
       },

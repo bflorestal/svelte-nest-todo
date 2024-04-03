@@ -1,17 +1,57 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Checkbox } from "$lib/components/ui/checkbox";
-  import * as Dialog from "$lib/components/ui/dialog";
-  import { FileEditIcon, TrashIcon } from "lucide-svelte";
+  import { TrashIcon } from "lucide-svelte";
   import { createMutation, useQueryClient } from "@tanstack/svelte-query";
-  import type { Todo } from "../schemas/Todo";
+  import { type Todo, FormSchema } from "../schemas/Todo";
 
   import { deleteTodo, updateTodo } from "../api";
   import { toast } from "svelte-sonner";
+  import TodoUpdateDialog from "./TodoUpdateDialog.svelte";
 
   export let task: Todo;
 
   const queryClient = useQueryClient();
+
+  const updateMutation = createMutation({
+    mutationKey: ["todos"],
+    mutationFn: updateTodo,
+    onMutate: async (updatedTask) => {
+      await queryClient.cancelQueries({ queryKey: ["todos"] });
+      const previousTasks = queryClient.getQueryData<Todo[]>(["todos"]);
+      queryClient.setQueryData<Todo[]>(["todos"], (tasks) => {
+        return tasks?.map((t) => {
+          if (t.id === updatedTask.id) {
+            return updatedTask;
+          }
+          return t;
+        });
+      });
+      return { previousTasks };
+    },
+    onError: async (err, _variables, context) => {
+      queryClient.setQueryData(["todos"], context?.previousTasks);
+      toast.error(err.message);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+    },
+  });
+
+  function updateTitle(title: string) {
+    try {
+      const parsedTitle = FormSchema.parse({ title });
+
+      $updateMutation.mutate({
+        ...task,
+        title: parsedTitle.title,
+      });
+    } catch (error) {
+      toast.error(
+        "Une erreur s'est produite lors de la mise à jour de la tâche."
+      );
+    }
+  }
 
   const deleteMutation = createMutation({
     mutationKey: ["todos"],
@@ -36,7 +76,18 @@
 
 <div class="grid gap-2 mt-4">
   <div class="flex items-center gap-4">
-    <Checkbox id={task.id} checked={task.completed} class="peer-hidden" />
+    <Checkbox
+      class="peer-hidden"
+      on:click={() => {
+        $updateMutation.mutate({
+          ...task,
+          completed: !task.completed,
+        });
+      }}
+      id={task.id}
+      checked={task.completed}
+      disabled={$updateMutation.status === "pending"}
+    />
     <label
       class="flex-1 text-sm peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
       for={task.id}
@@ -44,10 +95,7 @@
       {task.title}
     </label>
     <div class="flex gap-2 ml-auto">
-      <Button class="h-6 w-6" size="icon" variant="outline">
-        <FileEditIcon class="h-4 w-4" />
-        <span class="sr-only">Modifier</span>
-      </Button>
+      <TodoUpdateDialog {task} {updateTitle} />
       <Button
         class="h-6 w-6"
         on:click={() => $deleteMutation.mutate(task.id)}
