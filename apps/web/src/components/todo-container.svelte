@@ -10,8 +10,8 @@
   import { createQuery } from "@tanstack/svelte-query";
   import { fetchTodos } from "../api";
 
-  import Task from "./Task.svelte";
-  import TodoForm from "./TodoForm.svelte";
+  import Task from "./task.svelte";
+  import TodoForm from "./todo-form.svelte";
 
   const query = createQuery({
     queryKey: ["todos"],

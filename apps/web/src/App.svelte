@@ -2,7 +2,7 @@
   import { ModeWatcher } from "mode-watcher";
   import { Toaster } from "$lib/components/ui/sonner";
   import { QueryClient, QueryClientProvider } from "@tanstack/svelte-query";
-  import TodoContainer from "./components/TodoContainer.svelte";
+  import TodoContainer from "./components/todo-container.svelte";
 
   const queryClient = new QueryClient({
     defaultOptions: {

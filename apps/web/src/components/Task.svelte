@@ -7,7 +7,7 @@
 
   import { deleteTodo, updateTodo } from "../api";
   import { toast } from "svelte-sonner";
-  import TodoUpdateDialog from "./TodoUpdateDialog.svelte";
+  import TodoUpdateDialog from "./todo-update-dialog.svelte";
 
   export let task: Todo;
 
