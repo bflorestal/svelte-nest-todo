@@ -1,4 +1,4 @@
-import { TodoListSchema, TodoSchema } from "./schemas/Todo";
+import { TodoListSchema, TodoSchema, type Todo } from "./schemas/Todo";
 
 export class ResponseError extends Error {
   response: Response;
@@ -68,6 +68,50 @@ export async function createTodo(title: string) {
     const parsedTodo = TodoSchema.parse(data);
 
     return parsedTodo;
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function updateTodo(todo: Todo) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/todo/${todo.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(todo),
+    });
+
+    if (!res.ok) {
+      throw new ResponseError("Failed to update todo", res);
+    }
+
+    const data = await res.json();
+
+    const parsedTodo = TodoSchema.parse(data);
+
+    return parsedTodo;
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+export async function deleteTodo(id: string) {
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/todo/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      throw new ResponseError("Failed to delete todo", res);
+    }
+
+    const data = await res.json();
+
+    console.log(data);
+
+    return data;
   } catch (error) {
     handleError(error);
   }
