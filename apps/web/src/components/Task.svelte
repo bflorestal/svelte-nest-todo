@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { Checkbox } from "$lib/components/ui/checkbox";
-  // import * as Dialog from "$lib/components/ui/dialog";
+  import * as Dialog from "$lib/components/ui/dialog";
   import { FileEditIcon, TrashIcon } from "lucide-svelte";
   import { createMutation, useQueryClient } from "@tanstack/svelte-query";
   import type { Todo } from "../schemas/Todo";
@@ -50,7 +50,7 @@
       </Button>
       <Button
         class="h-6 w-6"
-        on:click={() => $deleteMutation.mutate("54158")}
+        on:click={() => $deleteMutation.mutate(task.id)}
         disabled={$deleteMutation.status === "pending"}
         size="icon"
         variant="outline"
