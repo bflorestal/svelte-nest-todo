@@ -43,9 +43,13 @@
         <p>Une erreur est survenue lors du chargement des tâches.</p>
       {/if}
       {#if $query.isSuccess}
-        {#each $query.data as task (task.id)}
-          <Task {task} />
-        {/each}
+        {#if $query.data.length === 0}
+          <p class="text-center text-base">Aucune tâche à afficher.</p>
+        {:else}
+          {#each $query.data as task (task.id)}
+            <Task {task} />
+          {/each}
+        {/if}
       {/if}
     </div>
   </CardContent>
